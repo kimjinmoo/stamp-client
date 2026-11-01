@@ -9,6 +9,7 @@ import 'package:stamp_client/screens/main_navigation_screen.dart';
 import 'package:stamp_client/screens/profile_screen.dart';
 import 'package:stamp_client/screens/qr_scan_screen.dart';
 import 'package:stamp_client/screens/ranking_screen.dart';
+import 'package:stamp_client/screens/splash_screen.dart';
 import 'package:stamp_client/screens/stamp_home_screen.dart';
 import 'package:stamp_client/widgets/stamp_success_dialog.dart';
 
@@ -51,6 +52,27 @@ void main() {
             ),
           ),
         );
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+      });
+
+      testWidgets('스플래시 화면 애니메이션 오버플로우 없음', (tester) async {
+        tester.view.physicalSize = size;
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+
+        await tester.pumpWidget(
+          ProviderScope(
+            child: MaterialApp(
+              theme: AppTheme.lightTheme,
+              home: const SplashScreen(duration: Duration(milliseconds: 300)),
+            ),
+          ),
+        );
+        await tester.pump(const Duration(milliseconds: 150));
+        expect(tester.takeException(), isNull);
+        await tester.pump(const Duration(milliseconds: 300));
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
       });

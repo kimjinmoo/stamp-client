@@ -49,6 +49,8 @@ void main() {
           child: StampClientApp(),
         ),
       );
+      // 스플래시 화면 애니메이션 및 전환 대기
+      await tester.pump(const Duration(milliseconds: 2500));
       await tester.pumpAndSettle();
 
       // 메인 앱바 타이틀 확인
