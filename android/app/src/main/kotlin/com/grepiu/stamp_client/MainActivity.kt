@@ -1,4 +1,4 @@
-package com.stamp.client.stamp_client
+package com.grepiu.stamp_client
 
 import io.flutter.embedding.android.FlutterActivity
 
