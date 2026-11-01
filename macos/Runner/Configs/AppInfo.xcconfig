@@ -8,7 +8,7 @@
 PRODUCT_NAME = stamp_client
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.grepiu.stampClient
+PRODUCT_BUNDLE_IDENTIFIER = com.grepiu.stamp_client
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2026 com.grepiu. All rights reserved.
