@@ -170,7 +170,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
+                      Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: 8,
+                        runSpacing: 4,
                         children: [
                           const Text(
                             '나 (스탬퍼)',
@@ -180,7 +183,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               color: AppColors.ink,
                             ),
                           ),
-                          const SizedBox(width: 8),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                             decoration: BoxDecoration(
@@ -304,29 +306,47 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   style: TextStyle(fontSize: 12, color: AppColors.muted),
                 ),
                 const SizedBox(height: 14),
-                SegmentedButton<int>(
-                  segments: const [
-                    ButtonSegment(value: 1, label: Text('1분 (테스트)')),
-                    ButtonSegment(value: 5, label: Text('5분')),
-                    ButtonSegment(value: 10, label: Text('10분 (기본)')),
-                    ButtonSegment(value: 30, label: Text('30분')),
-                  ],
-                  selected: {stampState.comboDurationMinutes},
-                  onSelectionChanged: (Set<int> newSelection) {
-                    ref.read(stampProvider.notifier).setComboDuration(newSelection.first);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('콤보 유지 시간이 ${newSelection.first}분으로 설정되었습니다.'),
-                        duration: const Duration(seconds: 1),
-                        behavior: SnackBarBehavior.floating,
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final isCompact = constraints.maxWidth < 320;
+                    return SegmentedButton<int>(
+                      segments: [
+                        ButtonSegment(
+                          value: 1,
+                          label: Text(isCompact ? '1분' : '1분 (테스트)'),
+                        ),
+                        const ButtonSegment(value: 5, label: Text('5분')),
+                        ButtonSegment(
+                          value: 10,
+                          label: Text(isCompact ? '10분' : '10분 (기본)'),
+                        ),
+                        const ButtonSegment(value: 30, label: Text('30분')),
+                      ],
+                      selected: {stampState.comboDurationMinutes},
+                      onSelectionChanged: (Set<int> newSelection) {
+                        ref.read(stampProvider.notifier).setComboDuration(newSelection.first);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('콤보 유지 시간이 ${newSelection.first}분으로 설정되었습니다.'),
+                            duration: const Duration(seconds: 1),
+                            behavior: SnackBarBehavior.floating,
+                          ),
+                        );
+                      },
+                      style: ButtonStyle(
+                        visualDensity: VisualDensity.compact,
+                        padding: WidgetStateProperty.all(
+                          const EdgeInsets.symmetric(horizontal: 4),
+                        ),
+                        textStyle: WidgetStateProperty.all(
+                          TextStyle(
+                            fontSize: isCompact ? 11 : 12,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
                       ),
                     );
                   },
-                  style: ButtonStyle(
-                    textStyle: WidgetStateProperty.all(
-                      const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
-                    ),
-                  ),
                 ),
               ],
             ),

@@ -65,7 +65,10 @@ class RankingScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
+                      Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: 6,
+                        runSpacing: 4,
                         children: [
                           const Text(
                             '내 현재 순위',
@@ -75,7 +78,6 @@ class RankingScreen extends ConsumerWidget {
                               color: AppColors.primary,
                             ),
                           ),
-                          const SizedBox(width: 6),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
@@ -370,12 +372,16 @@ class RankingScreen extends ConsumerWidget {
               children: [
                 Row(
                   children: [
-                    Text(
-                      user.userName,
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: isMe ? FontWeight.w800 : FontWeight.w700,
-                        color: isMe ? AppColors.primary : AppColors.ink,
+                    Flexible(
+                      child: Text(
+                        user.userName,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: isMe ? FontWeight.w800 : FontWeight.w700,
+                          color: isMe ? AppColors.primary : AppColors.ink,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     if (isMe) ...[

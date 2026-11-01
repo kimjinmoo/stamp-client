@@ -69,12 +69,13 @@ class _StampSuccessDialogState extends State<StampSuccessDialog>
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: AppRadius.roundedXl),
       backgroundColor: AppColors.canvas,
-      insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Padding(
-        padding: const EdgeInsets.all(28),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
             // 탄력 있는 도장 팝 애니메이션
             AnimatedBuilder(
               animation: _animController,
@@ -226,6 +227,7 @@ class _StampSuccessDialogState extends State<StampSuccessDialog>
             ),
           ],
         ),
+      ),
       ),
     );
   }

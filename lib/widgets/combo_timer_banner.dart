@@ -41,56 +41,65 @@ class ComboTimerBanner extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: isActive ? gaugeColor : AppColors.surfaceStrong,
-                      borderRadius: AppRadius.roundedFull,
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          isActive ? Icons.bolt_rounded : Icons.timer_outlined,
-                          size: 14,
-                          color: isActive ? AppColors.onPrimary : AppColors.muted,
+              Flexible(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: isActive ? gaugeColor : AppColors.surfaceStrong,
+                          borderRadius: AppRadius.roundedFull,
                         ),
-                        const SizedBox(width: 4),
-                        Text(
-                          isActive ? 'COMBO x${stampState.currentCombo}' : 'COMBO READY',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w800,
-                            color: isActive ? AppColors.onPrimary : AppColors.muted,
-                            letterSpacing: 0.3,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              isActive ? Icons.bolt_rounded : Icons.timer_outlined,
+                              size: 14,
+                              color: isActive ? AppColors.onPrimary : AppColors.muted,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              isActive ? 'COMBO x${stampState.currentCombo}' : 'COMBO READY',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w800,
+                                color: isActive ? AppColors.onPrimary : AppColors.muted,
+                                letterSpacing: 0.3,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      if (isActive)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: AppColors.primarySoft,
+                            borderRadius: AppRadius.roundedFull,
+                          ),
+                          child: Text(
+                            '+${stampState.currentCombo * 100}P 배수',
+                            style: const TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.primary,
+                            ),
                           ),
                         ),
-                      ],
-                    ),
+                    ],
                   ),
-                  const SizedBox(width: 8),
-                  if (isActive)
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: AppColors.primarySoft,
-                        borderRadius: AppRadius.roundedFull,
-                      ),
-                      child: Text(
-                        '+${stampState.currentCombo * 100}P 배수',
-                        style: const TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                    ),
-                ],
+                ),
               ),
+              const SizedBox(width: 8),
               // 실시간 카운트다운 타이머
               Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
                     Icons.access_time_rounded,

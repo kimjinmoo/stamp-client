@@ -95,6 +95,7 @@ class StampScanResult {
 /// 스탬프 및 콤보 시스템 상태 관리 Notifier (Riverpod 3 Notifier 표준)
 class StampNotifier extends Notifier<StampState> {
   Timer? _countdownTimer;
+  bool _disposed = false;
   static const String _prefStampsKey = 'stamp_client_stamps_v1';
   static const String _prefTotalScoreKey = 'stamp_client_total_score_v1';
   static const String _prefMaxComboKey = 'stamp_client_max_combo_v1';
@@ -104,7 +105,9 @@ class StampNotifier extends Notifier<StampState> {
 
   @override
   StampState build() {
+    _disposed = false;
     ref.onDispose(() {
+      _disposed = true;
       _countdownTimer?.cancel();
     });
 
@@ -116,6 +119,7 @@ class StampNotifier extends Notifier<StampState> {
   Future<void> _loadFromPreferences() async {
     try {
       final prefs = await SharedPreferences.getInstance();
+      if (_disposed) return;
       final stampsJson = prefs.getStringList(_prefStampsKey) ?? [];
       final stamps = stampsJson
           .map((s) => Stamp.fromJson(jsonDecode(s) as Map<String, dynamic>))
@@ -140,7 +144,9 @@ class StampNotifier extends Notifier<StampState> {
       _startTimer();
       _updateRemainingTime();
     } catch (e) {
-      _startTimer();
+      if (!_disposed) {
+        _startTimer();
+      }
     }
   }
 
@@ -168,7 +174,12 @@ class StampNotifier extends Notifier<StampState> {
   /// 1초 단위 타이머 시작
   void _startTimer() {
     _countdownTimer?.cancel();
+    if (_disposed) return;
     _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_disposed) {
+        timer.cancel();
+        return;
+      }
       _updateRemainingTime();
     });
   }

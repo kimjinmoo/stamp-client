@@ -171,194 +171,214 @@ class _QrScanScreenState extends ConsumerState<QrScanScreen> {
           ),
         ],
       ),
-      body: Stack(
-        children: [
-          // 모바일 스캐너 뷰
-          MobileScanner(
-            controller: _controller,
-            onDetect: _handleBarcode,
-            errorBuilder: (context, error) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.videocam_off_rounded, size: 56, color: Colors.white54),
-                      const SizedBox(height: 16),
-                      const Text(
-                        '카메라를 실행할 수 없습니다.\n(에뮬레이터 또는 권한 미승인)',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white70, fontSize: 15),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        error.errorDetails?.message ?? error.toString(),
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(color: Colors.white38, fontSize: 12),
-                      ),
-                      const SizedBox(height: 24),
-                      const Text(
-                        '하단의 [테스트용 유효 QR 시뮬레이션] 버튼을 눌러 바로 테스트할 수 있습니다.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: AppColors.secondary, fontSize: 13, fontWeight: FontWeight.w600),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isShort = constraints.maxHeight < 680;
+          final scanBoxSize = isShort ? 200.0 : 250.0;
+          final bottomPadding = isShort ? 16.0 : 28.0;
 
-          // 스캔 타겟 오버레이 프레임
-          Center(
-            child: Container(
-              width: 260,
-              height: 260,
-              decoration: BoxDecoration(
-                borderRadius: AppRadius.roundedXl,
-                border: Border.all(color: AppColors.primary, width: 3),
-              ),
-              child: Stack(
-                children: [
-                  // 코너 가이드라인 포인트
-                  Positioned(
-                    top: 12,
-                    left: 12,
-                    child: Container(
-                      width: 14,
-                      height: 14,
-                      decoration: const BoxDecoration(
-                        color: AppColors.primary,
-                        shape: BoxShape.circle,
+          return Stack(
+            children: [
+              // 모바일 스캐너 뷰
+              MobileScanner(
+                controller: _controller,
+                onDetect: _handleBarcode,
+                errorBuilder: (context, error) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.videocam_off_rounded, size: 56, color: Colors.white54),
+                          const SizedBox(height: 16),
+                          const Text(
+                            '카메라를 실행할 수 없습니다.\n(에뮬레이터 또는 권한 미승인)',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.white70, fontSize: 15),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            error.errorDetails?.message ?? error.toString(),
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(color: Colors.white38, fontSize: 12),
+                          ),
+                          const SizedBox(height: 24),
+                          const Text(
+                            '하단의 [테스트용 유효 QR 시뮬레이션] 버튼을 눌러 바로 테스트할 수 있습니다.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: AppColors.secondary, fontSize: 13, fontWeight: FontWeight.w600),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                  Positioned(
-                    bottom: 12,
-                    right: 12,
-                    child: Container(
-                      width: 14,
-                      height: 14,
-                      decoration: const BoxDecoration(
-                        color: AppColors.secondary,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  ),
-                ],
+                  );
+                },
               ),
-            ),
-          ),
 
-          // 상단 안내 문구
-          Positioned(
-            top: 24,
-            left: 20,
-            right: 20,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.65),
-                borderRadius: AppRadius.roundedFull,
-              ),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.qr_code_scanner_rounded, color: AppColors.secondary, size: 18),
-                  SizedBox(width: 8),
-                  Text(
-                    '매장의 동적 QR 코드를 사각형 안에 맞춰주세요',
-                    style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500),
+              // 스캔 타겟 오버레이 프레임 (짧은 화면에서는 상단 쪽으로 살짝 오프셋하여 하단 패널과 겹침 방지)
+              Positioned(
+                top: isShort ? (constraints.maxHeight - scanBoxSize) / 2 - 40 : (constraints.maxHeight - scanBoxSize) / 2 - 20,
+                left: (constraints.maxWidth - scanBoxSize) / 2,
+                child: Container(
+                  width: scanBoxSize,
+                  height: scanBoxSize,
+                  decoration: BoxDecoration(
+                    borderRadius: AppRadius.roundedXl,
+                    border: Border.all(color: AppColors.primary, width: 3),
                   ),
-                ],
-              ),
-            ),
-          ),
-
-          // 하단 테스트 편의 시뮬레이션 컨트롤 패널
-          Positioned(
-            bottom: 30,
-            left: 16,
-            right: 16,
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColors.canvas.withValues(alpha: 0.95),
-                borderRadius: AppRadius.roundedLg,
-                boxShadow: AppColors.cardShadow,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  child: Stack(
                     children: [
-                      Icon(Icons.build_circle_outlined, size: 16, color: AppColors.muted),
-                      SizedBox(width: 6),
-                      Text(
-                        '개발 및 테스트 편의 기능',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.muted,
+                      // 코너 가이드라인 포인트
+                      Positioned(
+                        top: 12,
+                        left: 12,
+                        child: Container(
+                          width: 14,
+                          height: 14,
+                          decoration: const BoxDecoration(
+                            color: AppColors.primary,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 12,
+                        right: 12,
+                        child: Container(
+                          width: 14,
+                          height: 14,
+                          decoration: const BoxDecoration(
+                            color: AppColors.secondary,
+                            shape: BoxShape.circle,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
-                  // 유효 QR 즉시 스캔 시뮬레이션 버튼 (client.md 명세)
-                  SizedBox(
-                    width: double.infinity,
-                    height: 48,
-                    child: ElevatedButton.icon(
-                      onPressed: _isProcessing ? null : _simulateValidScan,
-                      icon: const Icon(Icons.check_circle_outline_rounded, size: 18),
-                      label: const Text(
-                        '테스트용 유효 QR 즉시 스캔 시뮬레이션',
-                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.secondary,
-                        foregroundColor: AppColors.onPrimary,
-                        shape: RoundedRectangleBorder(borderRadius: AppRadius.roundedMd),
-                        elevation: 0,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  // 위조/만료 QR 차단 테스트 버튼
-                  SizedBox(
-                    width: double.infinity,
-                    height: 40,
-                    child: OutlinedButton.icon(
-                      onPressed: _isProcessing ? null : _simulateInvalidScan,
-                      icon: const Icon(Icons.block_rounded, size: 16, color: AppColors.error),
-                      label: const Text(
-                        '위조/만료 QR 차단 방어 테스트',
-                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.error),
-                      ),
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: AppColors.error),
-                        shape: RoundedRectangleBorder(borderRadius: AppRadius.roundedMd),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
-          ),
 
-          // 로딩 인디케이터
-          if (_isProcessing)
-            Container(
-              color: Colors.black45,
-              child: const Center(
-                child: CircularProgressIndicator(color: AppColors.primary),
+              // 상단 안내 문구
+              Positioned(
+                top: 16,
+                left: 16,
+                right: 16,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.7),
+                    borderRadius: AppRadius.roundedFull,
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.qr_code_scanner_rounded, color: AppColors.secondary, size: 18),
+                      SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          '매장의 동적 QR 코드를 사각형 안에 맞춰주세요',
+                          style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500),
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-        ],
+
+              // 하단 테스트 편의 시뮬레이션 컨트롤 패널
+              Positioned(
+                bottom: bottomPadding,
+                left: 16,
+                right: 16,
+                child: Container(
+                  padding: EdgeInsets.all(isShort ? 12 : 16),
+                  decoration: BoxDecoration(
+                    color: AppColors.canvas.withValues(alpha: 0.95),
+                    borderRadius: AppRadius.roundedLg,
+                    boxShadow: AppColors.cardShadow,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.build_circle_outlined, size: 16, color: AppColors.muted),
+                          SizedBox(width: 6),
+                          Text(
+                            '개발 및 테스트 편의 기능',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.muted,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: isShort ? 8 : 12),
+                      // 유효 QR 즉시 스캔 시뮬레이션 버튼 (client.md 명세)
+                      SizedBox(
+                        width: double.infinity,
+                        height: isShort ? 44 : 48,
+                        child: ElevatedButton.icon(
+                          onPressed: _isProcessing ? null : _simulateValidScan,
+                          icon: const Icon(Icons.check_circle_outline_rounded, size: 18),
+                          label: const FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              '테스트용 유효 QR 즉시 스캔 시뮬레이션',
+                              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.secondary,
+                            foregroundColor: AppColors.onPrimary,
+                            shape: RoundedRectangleBorder(borderRadius: AppRadius.roundedMd),
+                            elevation: 0,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      // 위조/만료 QR 차단 테스트 버튼
+                      SizedBox(
+                        width: double.infinity,
+                        height: isShort ? 38 : 40,
+                        child: OutlinedButton.icon(
+                          onPressed: _isProcessing ? null : _simulateInvalidScan,
+                          icon: const Icon(Icons.block_rounded, size: 16, color: AppColors.error),
+                          label: const FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              '위조/만료 QR 차단 방어 테스트',
+                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.error),
+                            ),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: AppColors.error),
+                            shape: RoundedRectangleBorder(borderRadius: AppRadius.roundedMd),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // 로딩 인디케이터
+              if (_isProcessing)
+                Container(
+                  color: Colors.black45,
+                  child: const Center(
+                    child: CircularProgressIndicator(color: AppColors.primary),
+                  ),
+                ),
+            ],
+          );
+        },
       ),
     );
   }
